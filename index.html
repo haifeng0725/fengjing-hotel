@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>枫璟酒管 — 专业酒店运营管理与智能数字化运营服务商</title>
+    <meta name="description" content="重庆枫璟酒店管理有限公司，专注酒店收益管理、OTA运营优化、房态监控系统开发与维护，为酒旅行业提供智能化运营解决方案。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* ── CSS Variables ── */
+        :root {
+            --bg-primary: #0f1923;
+            --bg-secondary: #162032;
+            --bg-card: #1c2a3a;
+            --bg-card-hover: #243548;
+            --accent: #c9a962;
+            --accent-light: #dfc07a;
+            --accent-glow: rgba(201, 169, 98, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b8c8;
+            --text-muted: #6b7f94;
+            --border: rgba(255,255,255,0.08);
+            --border-accent: rgba(201,169,98,0.35);
+            --glass: rgba(28, 42, 58, 0.6);
+            --shadow-card: 0 8px 40px rgba(0,0,0,0.45);
+            --shadow-accent: 0 4px 24px var(--accent-glow);
+            --radius: 14px;
+            --radius-lg: 20px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --max-w: 1200px;
+        }
+
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        img { max-width: 100%; display: block; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+
+        /* ── Utility ── */
+        .container {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px;
+        }
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 560px;
+            line-height: 1.8;
+        }
+        .section-header { margin-bottom: 52px; }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: -200% center; }
+            50% { background-position: 200% center; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Header ── */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 24px;
+            transition: var(--transition);
+        }
+        header.scrolled {
+            background: rgba(15, 25, 35, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-mark {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--bg-primary);
+            flex-shrink: 0;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.02em;
+        }
+        .logo-text span { color: var(--accent); }
+        nav { display: flex; align-items: center; gap: 32px; }
+        nav a {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            position: relative;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            border-radius: 1px;
+        }
+        nav a:hover { color: var(--text-primary); }
+        nav a:hover::after { width: 100%; }
+        .nav-cta {
+            background: var(--accent);
+            color: var(--bg-primary) !important;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600 !important;
+            font-size: 0.85rem !important;
+        }
+        .nav-cta::after { display: none !important; }
+        .nav-cta:hover { background: var(--accent-light) !important; transform: translateY(-1px); }
+        .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0 80px;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 60% 20%, rgba(201,169,98,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 10% 80%, rgba(52,120,220,0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0f1923 0%, #162032 100%);
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
+        }
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            animation: float 4s ease-in-out infinite;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            border: 1px solid var(--border-accent);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: relative;
+        }
+        .hero-badge-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        .hero h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+        .hero h1 .gold { color: var(--accent); }
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 40px;
+            max-width: 580px;
+            animation: fadeUp 0.8s ease 0.6s both;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.8s ease 0.8s both;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--bg-primary);
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-accent);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(201,169,98,0.4);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--text-primary);
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--border-accent);
+        }
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            margin-top: 72px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+            animation: fadeUp 0.8s ease 1s both;
+        }
+        .stat-item {}
+        .stat-number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        .hero-visual {
+            position: absolute;
+            right: -5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48%;
+            max-width: 580px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        /* ── Services ── */
+        .services {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .service-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card);
+        }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(201,169,98,0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--accent);
+            font-size: 1.4rem;
+            transition: var(--transition);
+        }
+        .service-card:hover .service-icon {
+            background: rgba(201,169,98,0.2);
+            transform: scale(1.08);
+        }
+        .service-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .service-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .service-tag {
+            display: inline-block;
+            background: rgba(201,169,98,0.1);
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 100px;
+            margin-top: 16px;
+            border: 1px solid rgba(201,169,98,0.2);
+        }
+
+        /* ── Why Us ── */
+        .why-us {
+            padding: 100px 0;
+            background: var(--bg-primary);
+        }
+        .why-us-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+        .why-us-visual {
+            position: relative;
+        }
+        .why-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+        .why-card:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+        }
+        .why-num {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            flex-shrink: 0;
+            width: 40px;
+        }
+        .why-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .why-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .why-img-wrap {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+        .why-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+        .why-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15,25,35,0.8), rgba(28,42,58,0.5));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .why-img-overlay .big-num {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.9;
+        }
+        .why-img-overlay span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Contact ── */
+        .contact {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+        }
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: start;
+        }
+        .contact-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            font-family: inherit;
+            transition: var(--transition);
+            outline: none;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(201,169,98,0.12);
+        }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 8px;
+        }
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201,169,98,0.35);
+        }
+        .contact-info { display: flex; flex-direction: column; gap: 24px; }
+        .contact-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: var(--transition);
+        }
+        .contact-item:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+        }
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(201,169,98,0.12);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .contact-item h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .contact-item p, .contact-item a {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+        .contact-item a:hover { color: var(--accent); }
+        .qr-placeholder {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-accent);
+            border-radius: var(--radius);
+            padding: 28px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .qr-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+        .qr-wrap img {
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .qr-wrap p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ── Differentiated Positioning ── */
+        .diff-section {
+            padding: 100px 0;
+            background: var(--bg-primary);
+            position: relative;
+        }
+        .diff-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+        }
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        .diff-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .diff-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .diff-card:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-card);
+        }
+        .diff-card:hover::after { opacity: 1; }
+        .diff-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(201,169,98,0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .diff-card:hover .diff-icon {
+            background: rgba(201,169,98,0.2);
+            transform: scale(1.06);
+        }
+        .diff-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .diff-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* ── Proprietary Tools ── */
+        .tools-section {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .tools-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .tool-card:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card);
+        }
+        .tool-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(201,169,98,0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            transition: var(--transition);
+        }
+        .tool-card:hover .tool-icon {
+            background: rgba(201,169,98,0.22);
+            transform: scale(1.08);
+        }
+        .tool-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(201,169,98,0.15);
+            color: var(--accent);
+            border: 1px solid rgba(201,169,98,0.3);
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+        .tool-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .tool-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+        .tool-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tool-tags span {
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+
+        /* ── CTA Banner ── */
+        .cta-banner {
+            padding: 80px 0;
+            background: var(--bg-primary);
+        }
+        .cta-inner {
+            background: linear-gradient(135deg, rgba(201,169,98,0.15), rgba(201,169,98,0.05));
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-lg);
+            padding: 60px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(201,169,98,0.08) 0%, transparent 70%);
+        }
+        .cta-inner * { position: relative; }
+        .cta-inner h2 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .cta-inner p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: #0a121c;
+            border-top: 1px solid var(--border);
+            padding: 48px 0 32px;
+        }
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            padding-bottom: 36px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .footer-brand {}
+        .footer-brand .logo-mark { margin-bottom: 12px; }
+        .footer-brand p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 320px;
+            line-height: 1.8;
+            margin-top: 12px;
+        }
+        .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+        .footer-col h4 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .footer-col a {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .footer-col a:hover { color: var(--accent); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .footer-bottom p a { color: var(--text-muted); }
+        .footer-bottom p a:hover { color: var(--accent); }
+
+        /* ── Scroll to top ── */
+        .scroll-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: var(--transition);
+            z-index: 999;
+            box-shadow: var(--shadow-accent);
+        }
+        .scroll-top.visible { opacity: 1; transform: translateY(0); }
+        .scroll-top:hover { transform: translateY(-3px); background: var(--accent-light); }
+
+        /* ── Mobile Nav ── */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(10,18,28,0.97);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav a {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', serif;
+        }
+        .mobile-nav .close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            nav { display: none; }
+            .menu-toggle { display: block; color: var(--text-primary); font-size: 1.5rem; }
+            .hero-stats { gap: 32px; }
+            .why-us-grid { grid-template-columns: 1fr; gap: 40px; }
+            .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-links { gap: 32px; }
+            .diff-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .hero-stats { flex-direction: column; gap: 20px; }
+            .services-grid { grid-template-columns: 1fr; }
+            .diff-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .cta-inner { padding: 40px 24px; }
+            .footer-top { flex-direction: column; }
+            .footer-bottom { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="header-inner">
+            <a href="#" class="logo">
+                <div class="logo-mark">枫</div>
+                <div class="logo-text">枫璟<span>酒管</span></div>
+            </a>
+            <nav>
+                <a href="#services">核心服务</a>
+                <a href="#diff">差异化优势</a>
+                <a href="#tools">自研工具</a>
+                <a href="#contact">联系我们</a>
+                <a href="#contact" class="nav-cta">立即咨询</a>
+            </nav>
+            <button class="menu-toggle" onclick="document.getElementById('mobileNav').classList.add('open')" aria-label="打开菜单">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-btn" onclick="this.parentElement.classList.remove('open')" aria-label="关闭菜单">&times;</button>
+        <a href="#services" onclick="this.parentElement.classList.remove('open')">核心服务</a>
+        <a href="#diff" onclick="this.parentElement.classList.remove('open')">差异化优势</a>
+        <a href="#tools" onclick="this.parentElement.classList.remove('open')">自研工具</a>
+        <a href="#contact" onclick="this.parentElement.classList.remove('open')">联系我们</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-particles">
+            <div class="particle" style="left:15%;top:20%;animation-delay:0s"></div>
+            <div class="particle" style="left:75%;top:60%;animation-delay:1.2s"></div>
+            <div class="particle" style="left:45%;top:80%;animation-delay:2.4s"></div>
+            <div class="particle" style="left:88%;top:30%;animation-delay:0.8s"></div>
+            <div class="particle" style="left:30%;top:70%;animation-delay:1.8s"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <div class="hero-badge-dot"></div>
+                    专注酒旅行业 · 智能化运营
+                </div>
+                <h1>
+                    专业酒店运营管理<br>
+                    与 <span class="gold">AI+酒店运营</span> 服务商
+                </h1>
+                <p class="hero-desc">
+                    帮助酒店在 OTA 上多赚钱 · 用 AI + 数据智能优价管理
+                </p>
+                <div class="hero-actions">
+                    <a href="#contact" class="btn-primary">
+                        获取定制方案
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                    <a href="#services" class="btn-secondary">
+                        了解我们的服务
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">9+</div>
+                        <div class="stat-label">核心房型追踪</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">365天</div>
+                        <div class="stat-label">节假日实时监控</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">OTA+</div>
+                        <div class="stat-label">多平台运营覆盖</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">What We Do</div>
+                <h2 class="section-title">核心服务</h2>
+                <p class="section-subtitle">围绕酒店运营全链路，提供从平台代运营到智能化系统升级的一站式服务。</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                    <h3>OTA运营</h3>
+                    <p>携程、美团、飞猪等主流平台一站式代运营，覆盖产品优化、评价管理、流量获取与转化率提升，让线上渠道真正成为酒店核心增长引擎。</p>
+                    <span class="service-tag">OTA Operations</span>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="7" y1="8" x2="11" y2="8"/><line x1="7" y1="11" x2="13" y2="11"/></svg>
+                    </div>
+                    <h3>AI+酒店工具</h3>
+                    <p>自研节假日房态追踪、商圈全局眼、竞对显微镜等AI工具，7×24小时自动化监控，数据驱动精准定价与房态决策，替代人工盯盘，释放运营精力。</p>
+                    <span class="service-tag">AI + Tools</span>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <h3>酒店智能化升级改造</h3>
+                    <p>从系统对接、数据打通到智能运营，为酒店提供全链路数字化升级改造方案，让传统酒店具备现代数字化运营能力，降本增效，提升核心竞争力。</p>
+                    <span class="service-tag">Smart Upgrade</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us -->
+    <section class="why-us" id="why-us">
+        <div class="container">
+            <div class="why-us-grid">
+                <div>
+                    <div class="section-header reveal">
+                        <div class="section-label">Why Choose Us</div>
+                        <h2 class="section-title">为什么选择枫璟</h2>
+                        <p class="section-subtitle">我们深知酒旅行业的节奏与挑战，用数据驱动决策，用系统保障执行。</p>
+                    </div>
+                    <div class="why-card reveal">
+                        <div class="why-num">01</div>
+                        <div>
+                            <h4>行业深度专注</h4>
+                            <p>团队深耕酒旅行业多年，熟悉OTA规则演变与酒店运营全链路，能快速发现增长机会。</p>
+                        </div>
+                    </div>
+                    <div class="why-card reveal">
+                        <div class="why-num">02</div>
+                        <div>
+                            <h4>数据驱动决策</h4>
+                            <p>所有建议基于真实数据，交叉验证确保准确性。我们坚持「数据不说谎」原则，杜绝拍脑袋决策。</p>
+                        </div>
+                    </div>
+                    <div class="why-card reveal">
+                        <div class="why-num">03</div>
+                        <div>
+                            <h4>自动化提效</h4>
+                            <p>自研各类监控工具，实现7×24小时无人值守监控，异常即时预警，释放人力专注增值工作。</p>
+                        </div>
+                    </div>
+                    <div class="why-card reveal">
+                        <div class="why-num">04</div>
+                        <div>
+                            <h4>贴身定制服务</h4>
+                            <p>深入了解每家酒店的定位与痛点，提供真正适配的运营方案，而非千篇一律的模板策略。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="why-us-visual reveal">
+                    <div class="why-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80" alt="酒店大堂" onerror="this.style.display='none'">
+                        <div class="why-img-overlay">
+                            <div class="big-num">枫璟</div>
+                            <span>专注 · 专业 · 专精</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Differentiated Positioning -->
+    <section class="diff-section" id="diff">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Our Edge</div>
+                <h2 class="section-title">我们的差异化优势</h2>
+                <p class="section-subtitle">我们不是软件公司、不是传统代运营、不是大公司、不是外地公司——我们是为川渝中小酒店而生的专业团队。</p>
+            </div>
+            <div class="diff-grid">
+                <div class="diff-card reveal">
+                    <div class="diff-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3>不是 SaaS 软件公司</h3>
+                    <p>我们比 SaaS 厂商更懂酒店运营。不是卖工具，是帮您用好工具、做对决策。</p>
+                </div>
+                <div class="diff-card reveal">
+                    <div class="diff-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>不是传统代运营</h3>
+                    <p>我们比传统代运营更有技术能力。用 AI + 数据驱动，拒绝靠经验拍脑袋。</p>
+                </div>
+                <div class="diff-card reveal">
+                    <div class="diff-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>不是大公司</h3>
+                    <p>我们比连锁酒店更灵活、成本更低。中小体量，专注服务质量，不摊大饼。</p>
+                </div>
+                <div class="diff-card reveal">
+                    <div class="diff-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg>
+                    </div>
+                    <h3>不是外地公司</h3>
+                    <p>我们比外地服务商更懂川渝市场。本地团队，懂川渝消费习惯，响应更及时。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proprietary Tools -->
+    <section class="tools-section" id="tools">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Our Products</div>
+                <h2 class="section-title">自研核心工具</h2>
+                <p class="section-subtitle">我们自主研发了多款专为酒店运营设计的智能化工具，覆盖房态追踪、商圈洞察、竞对监控、经营分析全链路。</p>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>节假日房态追踪系统</h3>
+                    <p>全天候自动化追踪商务、轻奢、豪华、家庭亲子等 9 种核心房型的实时可售数量，严格交叉验证，确保数据与截图完全一致，节假日运营决策有据可依。</p>
+                    <div class="tool-tags">
+                        <span>实时监控</span><span>节假日预警</span><span>多房型追踪</span>
+                    </div>
+                </div>
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>商圈全局眼</h3>
+                    <p>实时监控商圈内所有竞对酒店的价格浮动与房态变化，掌握区域市场竞争格局，帮您知己知彼，定价决策快人一步。</p>
+                    <div class="tool-tags">
+                        <span>商圈监控</span><span>价格追踪</span><span>竞争情报</span>
+                    </div>
+                </div>
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>竞对显微镜</h3>
+                    <p>深度监控竞对所有房型的明细价格，捕捉每一次价格调整，支持多维度横向对比，洞悉竞争对手的定价策略与促销节奏。</p>
+                    <div class="tool-tags">
+                        <span>竞对分析</span><span>明细价格</span><span>多维度对比</span>
+                    </div>
+                </div>
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>多店管理运营工具</h3>
+                    <p>统一管理多家酒店的数据与运营状态，跨店横向对比分析，运营报表一键生成，大幅提升多店管理效率与决策质量。</p>
+                    <div class="tool-tags">
+                        <span>多店管理</span><span>数据汇总</span><span>报表自动化</span>
+                    </div>
+                </div>
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>GEO 经营数据分析</h3>
+                    <p>获取酒店实时 GEO（经营数据分析），整合出租率、RevPAR、ADR 等核心指标，量化评估经营状况，精准定位提升空间。</p>
+                    <div class="tool-tags">
+                        <span>GEO</span><span>出租率</span><span>RevPAR</span><span>ADR</span>
+                    </div>
+                </div>
+                <div class="tool-card reveal">
+                    <div class="tool-card-header">
+                        <div class="tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <span class="tool-badge">自研</span>
+                    </div>
+                    <h3>经营数据复盘</h3>
+                    <p>定期为合作酒店做经营数据复盘，从数据中挖掘问题与机会，制定下一阶段优化策略，让每一次复盘都成为下一次增长的起点。</p>
+                    <div class="tool-tags">
+                        <span>定期复盘</span><span>策略优化</span><span>数据洞察</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+        <div class="container">
+            <div class="cta-inner reveal">
+                <h2>准备好提升酒店收益了吗？</h2>
+                <p>无论您是单体酒店还是连锁品牌，枫璟酒管都能为您提供量身定制的运营解决方案。</p>
+                <a href="#contact" class="btn-primary">
+                    预约免费咨询
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Get In Touch</div>
+                <h2 class="section-title">联系我们</h2>
+                <p class="section-subtitle">期待与您深入交流，共同探讨酒店运营提升之道。</p>
+            </div>
+            <div class="contact-layout">
+                <div class="contact-info reveal">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.56 3.47a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.09a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.7 16.92z"/></svg>
+                        </div>
+                        <div>
+                            <h4>联系电话</h4>
+                            <a href="tel:157-2329-6264">157-2329-6264</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <h4>电子邮箱</h4>
+                            <a href="mailto:haifeng07251022@gmail.com">haifeng07251022@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </div>
+                        <div>
+                            <h4>微信公众号</h4>
+                            <p>枫璟酒管（搜索关注获取资讯）</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <h4>公司地址</h4>
+                            <p>重庆市渝北区</p>
+                        </div>
+                    </div>
+                    <div class="qr-wrap">
+                        <img src="images/70af738b-f6bb-49c3-bbe2-562855ccd190.png" alt="微信二维码" width="160">
+                        <p>扫码添加微信咨询</p>
+                    </div>
+                </div>
+                <div class="contact-form reveal">
+                    <form id="contactForm" action="https://formspree.io/f/mykojbez" method="POST" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">您的姓名 *</label>
+                                <input type="text" id="name" name="name" placeholder="请输入姓名" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">联系电话 *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="手机号码" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hotel">酒店/企业名称</label>
+                            <input type="text" id="hotel" name="hotel" placeholder="如：XX酒店">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">感兴趣的服务</label>
+                            <input type="text" id="service" name="service" placeholder="如：收益管理、OTA运营等">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">留言内容 *</label>
+                            <textarea id="message" name="message" placeholder="请简单描述您的需求，我们将尽快与您联系..." required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">提交咨询意向</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-mark">枫</div>
+                        <div class="logo-text">枫璟<span>酒管</span></div>
+                    </div>
+                    <p>重庆枫璟酒店管理有限公司 — 专注酒旅行业，为酒店提供收益管理、OTA运营与智能化房态监控的一站式服务。</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>服务</h4>
+                        <a href="#services">OTA运营</a>
+                        <a href="#services">AI+酒店工具</a>
+                        <a href="#services">智能化升级改造</a>
+                        <a href="#tools">自研工具系统</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>公司</h4>
+                        <a href="#why-us">关于我们</a>
+                        <a href="#contact">联系我们</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 重庆枫璟酒店管理有限公司 版权所有</p>
+                <p>蜀ICP备000000000号 | 技术支持 <a href="#">枫璟酒管</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to top -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('header');
+        const scrollTop = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            header.classList.toggle('scrolled', y > 50);
+            scrollTop.classList.toggle('visible', y > 500);
+        });
+
+        // Reveal on scroll
+        const reveals = document.querySelectorAll('.reveal');
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    io.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        reveals.forEach(el => io.observe(el));
+
+        // Form handler
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('.form-submit');
+            btn.textContent = '提交中...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (res.ok) {
+                    btn.textContent = '已提交 ✓';
+                    btn.style.background = 'rgba(76,175,80,0.4)';
+                    form.reset();
+                    setTimeout(() => {
+                        btn.textContent = '提交咨询意向';
+                        btn.style.background = '';
+                        btn.disabled = false;
+                    }, 3000);
+                } else {
+                    btn.textContent = '提交失败，请重试';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                btn.textContent = '提交失败，请重试';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
